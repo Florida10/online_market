@@ -20,7 +20,7 @@
  							<input name="password" type="password"  placeholder="Password">
  						</li>
  						<li class='input'>
- 							<input name="re-pass" type="pasword"  placeholder="Re-type password">
+ 							<input name="re-pass" type="password"  placeholder="Re-type password">
  						</li>
  						<li class='input'>
  							<input name="emer" type="text"  placeholder="Emer">
@@ -62,9 +62,9 @@
  	</ul>
 
  	<div>
- 	   @if(session()->has('message'))
-         <div class="alert alert-success">
-        {{ session()->get('message') }}
+ 	   @if(!empty($message))
+         <div>
+        {{ $message }}
          </div>
       @endif
  	</div>
