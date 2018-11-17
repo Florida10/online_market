@@ -37,7 +37,7 @@ class M_User extends Model
      * @var array
      */
     protected $fillable = [
-        'uname', 'password', 'emer', 'gjinia', 'qyteti', 'adresa', 'cel', 'tel', 'email'
+        'USERNAME', 'password', 'EMER_MBIEMER', 'gjinia', 'qyteti', 'adresa', 'cel', 'tel', 'email','cr_Date','last_update'
     ];
 
     /**
