@@ -28,7 +28,7 @@
  						<li class='input'>
  							<select name='gjinia'>
  								 <option value='male'>Male</option>
- 								 <option value='female'>Female</option>
+								<option value='female'>Female</option>
  							</select>
  						</li>
  						<li class='input'>

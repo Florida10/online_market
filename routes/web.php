@@ -23,6 +23,6 @@ Route::POST('registration','Userscontroller@validate_user_input');
 //routing for user login
 Route::get('login','Userscontroller@return_login');
 
-//routing for user login logic
- Route::POST('login_user','Userscontroller@user_login');
 
+//routing for user authentication
+Route::POST('login_man','Userscontroller@user_login');
