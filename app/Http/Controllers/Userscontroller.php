@@ -152,7 +152,18 @@ class Userscontroller extends Controller
                         session::flash('user',$request->input('username'));
                          switch($key->ROLI) {
                              case "user":
-                                 return view('welcome');
+                                 return view('user.panel');
+                                 break;
+                                 //case for admin
+                             case "admin":
+                                 return view('admin.index');
+                                 break;
+                                //case for supermarket
+                             case "supermarket":
+                                 return view('supermarket.panel');
+                                 break;//case for client
+                             case "klient":
+                                 return view('klient.panel');
                                  break;
                              default:
                                  return view('login')->with('message1','Account problem please try again');
