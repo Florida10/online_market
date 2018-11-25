@@ -55,7 +55,7 @@ class Userscontroller extends Controller
 
                 }
             }
-
+             //checking 
             //checking if user_roli has value
 
             if(empty($user_roli)){
