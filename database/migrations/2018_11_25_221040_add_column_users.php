@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCreateDate extends Migration
+class AddColumnUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +15,7 @@ class AddCreateDate extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->DATE('CR_DATE');
+            $table->DATE('LAST_UPDATE');
         });
     }
 
@@ -27,6 +28,7 @@ class AddCreateDate extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('CR_DATE');
+            $table->dropColumn('LAST_UPDATE');
         });
     }
 }
