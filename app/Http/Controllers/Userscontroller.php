@@ -33,85 +33,110 @@ class Userscontroller extends Controller
 
 
     //validate data for user registration
+    //validate data for user registration
     public function validate_user_input(Request $request)
     {
+        //checking session
+        if(Session::has('user')){
+            //taking form data
 
-        //taking form data 
-        $alldata = $request->all();
+            $user = Session::get('user');
 
-        //validating user input
+            //getting the role of the user
+            $return_roli = $users::where('USERNAME', '=', $request->input('uname'))->get();
+            foreach ($return_roli as $roli){
+                switch($roli){
+                    case 'supermarket':
+                        $user_roli = 'user';
+                        break;
+                    case 'admin':
+                        $user_roli = 'supermarket';
+                        break;
+                    case 'guest':
+                        $user_roli = 'klient';
+                        break;
+                }
+            }
 
-        $rules = ['uname' => ['alpha_num', 'min:3', 'required'],
-            'password' => ['alpha_num', 'min:6', 'max:15', 'required'],
-            're-pass' => ['alpha_num', 'min:6', 'max:15', 'required'],
-            'emer' => ['alpha_dash', 'min:3', 'max:20'],
-            'gjinia' => ['alpha_num', 'required'],
-            'qyteti' => ['alpha_num', 'min:3', ':max:30', 'required'],
-            'adresa' => ['alpha_num', 'min:3', 'required'],
-            'cel' => ['alpha_num', 'min:10', 'max:10', 'required'],
-            'tel' => ['alpha_num', 'min:10', 'max:10', 'required'],
-            'email' => ['required', 'email']
-        ];
+            $alldata = $request->all();
+
+            //validating user input
+
+            $rules = ['uname' => ['alpha_num', 'min:3', 'required'],
+                'password' => ['alpha_num', 'min:6', 'max:15', 'required'],
+                're-pass' => ['alpha_num', 'min:6', 'max:15', 'required'],
+                'emer' => ['alpha_dash', 'min:3', 'max:20'],
+                'gjinia' => ['alpha_num', 'required'],
+                'qyteti' => ['alpha_num', 'min:3', ':max:30', 'required'],
+                'adresa' => ['alpha_num', 'min:3', 'required'],
+                'cel' => ['alpha_num', 'min:10', 'max:10', 'required'],
+                'tel' => ['alpha_num', 'min:10', 'max:10', 'required'],
+                'email' => ['required', 'email']
+            ];
 
 
-        //creating validator
+            //creating validator
 
-        $validator = Validator::make($alldata, $rules);
+            $validator = Validator::make($alldata, $rules);
 
-        if ($validator->passes()) {
-            //declaring object for model
-            $users = new M_user();
+            if ($validator->passes()) {
+                //declaring object for model
+                $users = new M_user();
 
 
-            //check password match
-            if ($request->input('password') !== $request->input('re-pass')) {
+                //check password match
+                if ($request->input('password') !== $request->input('re-pass')) {
 
-                return view('user.register')->with('message', 'Passwords doesent match!');
+                    return view('user.register')->with('message', 'Passwords doesent match!');
+
+                }
+
+                //check if the account already exists
+                $return_data = $users::where('USERNAME', '=', $request->input('uname'))->orwhere('EMAIL', '=', $request->input('email'))->count();
+
+
+                if ($return_data > 0) {
+                    return view('user.register')->with('message', 'USERNAME OR EMAIL ALREADY EXISTS!');
+                }
+
+                //hasing password
+                $hashed_pass = Hash::make($request->input('password'));
+
+
+                //mapping data from form to the model and  save them into corresponding database table
+                $users->USERNAME = $request->input('uname');
+                $users->password = $hashed_pass;
+                $users->EMER_MBIEMER = $request->input('emer');
+                $users->gjinia = $request->input('gjinia');
+                $users->qyteti = $request->input('qyteti');
+                $users->adresa = $request->input('adresa');
+                $users->cel = $request->input('cel');
+                $users->tel = $request->input('tel');
+                $users->email = $request->input('email');
+                $users->roli  = $user_roli;
+                $users->CR_DATE = date('Y-m-d');
+                $users->last_update = date('Y-m-d');
+
+                //insert data to db and checking if was succesfull
+                if ($users->save() === true) {
+
+                    return view('user.register')->with('message', 'USER REGISTRED SUCCESFULLY!');
+
+                } else {
+
+                    return view('user.register')->with('message', 'SOMETHING WENT WRONG PLEASE TRY AGAIN!');
+
+                }
 
             }
 
-            //check if the account already exists
-            $return_data = $users::where('USERNAME', '=', $request->input('uname'))->orwhere('EMAIL', '=', $request->input('email'))->count();
+            return view('user.register')->withErrors($validator);
 
-
-            if ($return_data > 0) {
-                return view('user.register')->with('message', 'USERNAME OR EMAIL ALREADY EXISTS!');
-            }
-
-            //hasing password
-            $hashed_pass = Hash::make($request->input('password'));
-
-
-            //mapping data from form to the model and  save them into corresponding database table
-            $users->USERNAME = $request->input('uname');
-            $users->password = $hashed_pass;
-            $users->EMER_MBIEMER = $request->input('emer');
-            $users->gjinia = $request->input('gjinia');
-            $users->qyteti = $request->input('qyteti');
-            $users->adresa = $request->input('adresa');
-            $users->cel = $request->input('cel');
-            $users->tel = $request->input('tel');
-            $users->email = $request->input('email');
-            $users->roli  = 'users';
-            $users->CR_DATE = date('Y-m-d');
-            $users->last_update = date('Y-m-d');
-
-            //insert data to db and checking if was succesfull
-            if ($users->save() === true) {
-
-                return view('user.register')->with('message', 'USER REGISTRED SUCCESFULLY!');
-
-            } else {
-
-                return view('user.register')->with('message', 'SOMETHING WENT WRONG PLEASE TRY AGAIN!');
-
-            }
-
+        } else {
+            return view('login')->with('message1','Please login to use the functions');
         }
 
-        return view('user.register')->withErrors($validator);
     }
-
     //function for login
     public function user_login(Request $request)
     {
