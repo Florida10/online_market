@@ -33,29 +33,33 @@ class Userscontroller extends Controller
 
 
     //validate data for user registration
-    //validate data for user registration
     public function validate_user_input(Request $request)
     {
         //checking session
+        $users = new M_user();
         if(Session::has('user')){
             //taking form data
 
-            $user = Session::get('user');
+            $user = Session('user');
 
             //getting the role of the user
-            $return_roli = $users::where('USERNAME', '=', $request->input('uname'))->get();
+             $return_roli = $users::where('USERNAME', '=', $user)->get();
             foreach ($return_roli as $roli){
-                switch($roli){
+                switch($roli->ROLI){
                     case 'supermarket':
                         $user_roli = 'user';
                         break;
                     case 'admin':
                         $user_roli = 'supermarket';
                         break;
-                    case 'guest':
-                        $user_roli = 'klient';
-                        break;
+
                 }
+            }
+
+            //checking if user_roli has value
+
+            if(empty($user_roli)){
+                $user_roli = 'klient';
             }
 
             $alldata = $request->all();
@@ -81,7 +85,7 @@ class Userscontroller extends Controller
 
             if ($validator->passes()) {
                 //declaring object for model
-                $users = new M_user();
+//                $users = new M_user();
 
 
                 //check password match
@@ -99,7 +103,7 @@ class Userscontroller extends Controller
                     return view('user.register')->with('message', 'USERNAME OR EMAIL ALREADY EXISTS!');
                 }
 
-                //hasing password
+                //hashing password
                 $hashed_pass = Hash::make($request->input('password'));
 
 
@@ -174,7 +178,7 @@ class Userscontroller extends Controller
                     if($key->USERNAME  === $request->input('username')  AND $key->PASSWORD === $request->input('password')){
                         //start session
                         //redirect to user panel view
-                        session::flash('user',$request->input('username'));
+                        Session::put('user',$request->input('username'));
                          switch($key->ROLI) {
                              case "user":
                                  return view('user.panel');

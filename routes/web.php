@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('reg','Userscontroller@return_register');
+Route::get('regist_user','Userscontroller@return_register');
 
 //routing for registering user in the system
 Route::POST('registration','Userscontroller@validate_user_input');
